@@ -1,18 +1,20 @@
 import numpy as np
 import pandas as pd
 
-def grid_utm(long_i,long_f,lat_i,lat_f,dx=None,dy=None,nx=None,ny=None):
-    """
-    ATENÇÃO: Habilitar a criação do grida para mais de uma zona
+#===================================== Grid UTM ====================================================#
+def grid_utm(long_i,long_f,lat_i,lat_f,zone,letter,dx=None,dy=None,nx=None,ny=None):
     
-    Ideia: passar uma lista com os ranges de cada letter
+    """
+    Recebe longitude(s), latitude(s), zona(s), letra(s) e gera um grid de espaçamento regular
     
     Dados de entrada - Atributos da Função
     
-    long_i - (int)
-    long_f - (int)
-    lat_i -  (int)
-    lat_f -  (int)
+    long_i - (int, list(int))
+    long_f - (int, list(int))
+    lat_i -  (int, list(int))
+    lat_f -  (int, list(int))
+    zone - Zona da coordenada UTM      (int,list(int))
+    letter Letra da  coordenada UTM    (int,list(int))
     dx -     (int)
     dy -     (int)
     nx - número de células no eixo x - longitude - (int)
@@ -21,15 +23,24 @@ def grid_utm(long_i,long_f,lat_i,lat_f,dx=None,dy=None,nx=None,ny=None):
     Saída
     
     retorna um DataFrame com a longitudade e latitude fornecidade para a criação do grid (DataFrame)
-    
     """
-    try: x = np.arange(long_i,long_f+dx,dx) ; y = np.arange(lat_i,lat_f,dy)
-    except: x = np.linspace(long_i,long_f,nx) ; y = np.linspace(lat_i,lat_f,ny)
-        
-    X,Y = np.meshgrid(x,y)
     
-    return pd.DataFrame({'Long_utm':X.reshape(X.shape[0]*X.shape[1]), 'Lat_utm':Y.reshape(Y.shape[0]*Y.shape[1])})
+    long_i, long_f, lat_i, lat_f = list(long_i), list(long_f), list(lat_i), list(lat_f)
+    zone, letter = list(zone), list(letter)
+    
+    df = pd.DataFrame()
+    
+    for lg_i,lg_f,lt_i,lt_f,z,l in zip(long_i,long_f,lat_i,lat_f,zone,letter):
+    
+        X,Y = np.meshgrid(np.arange(lg_i,lg_f,dx),np.arange(lt_i,lt_f,dy))
+        aux = pd.DataFrame({'Longitude':X.reshape(X.shape[0]*X.shape[1]), 'Latitude':Y.reshape(Y.shape[0]*Y.shape[1])})
+        aux['Zone'] = z
+        aux['Letter'] = l
+    
+        df = df.append(aux)
+    return df
 
+#================================== Função grid graus decimais ========================#    
 def grid_decimal_degree(long_i,long_f,lat_i,lat_f,dx=None,dy=None,nx=None,ny=None):
     """
     Dados de entrada - Atributos da Função
@@ -52,4 +63,4 @@ def grid_decimal_degree(long_i,long_f,lat_i,lat_f,dx=None,dy=None,nx=None,ny=Non
     except: x = np.linspace(long_i,long_f,nx) ; y = np.linspace(lat_i,lat_f,ny)
         
     X,Y = np.meshgrid(x,y)
-    return pd.DataFrame({'Long_utm':X.reshape(X.shape[0]*X.shape[1]), 'Lat_utm':Y.reshape(Y.shape[0]*Y.shape[1])})
+    return pd.DataFrame({'Longitude':X.reshape(X.shape[0]*X.shape[1]), 'Latitude':Y.reshape(Y.shape[0]*Y.shape[1])})
