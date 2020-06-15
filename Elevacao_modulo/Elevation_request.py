@@ -1,6 +1,6 @@
-import request
+import requests
 
-def get_elevation_airmap(lat,long):
+def get_elevation_airmap(long,lat):
     """
     
     Documentação da API: https://developers.airmap.com/docs/elevation-api
@@ -18,3 +18,10 @@ def get_elevation_airmap(lat,long):
         return js['data']
     else:
         return -99999 #retorna -99999 em caso de erro
+
+def get_elevation_from_grid(df,long='Longitude',lat='Latitude'):
+    """
+    Recebe um DataFrame com um grid e retorna a elevação
+    """
+    long, lat, size = df[long].to_numpy(), df[lat].to_numpy(), df.size
+    return [get_elevation_airmap(long[i],lat[i])[0] for i in range(size)]
