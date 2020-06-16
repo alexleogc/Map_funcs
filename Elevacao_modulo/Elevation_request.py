@@ -19,9 +19,28 @@ def get_elevation_airmap(long,lat):
     else:
         return -99999 #retorna -99999 em caso de erro
 
-def get_elevation_from_grid(df,long='Longitude',lat='Latitude'):
+def grid_elevation_airmap(df,long='Longitude',lat='Latitude'):
     """
     Recebe um DataFrame com um grid e retorna a elevação
     """
     long, lat, size = df[long].to_numpy(), df[lat].to_numpy(), df.size
     return [get_elevation_airmap(long[i],lat[i])[0] for i in range(size)]
+
+
+def get_elevation_google(lat,lon,key):
+    """
+    Função que requisita a elevação a partir da API do google
+    
+    Entrada 
+    
+    lat - Latitude em graus decimais (float)
+    lon - Longitude em graus decimais (float)
+    key - Chave da API (str)
+    
+    Saída
+    
+    A saída é um dicionário contendo informações sobre o status / dado de elevação (dic)
+    """
+    html = 'https://maps.googleapis.com/maps/api/elevation/json?locations='
+    html_full = html+str(lat)+','+str(lon)+'&key='+key
+    return requests.get(html_full).json()
