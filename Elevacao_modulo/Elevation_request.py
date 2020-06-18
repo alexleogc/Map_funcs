@@ -23,7 +23,7 @@ def grid_elevation_airmap(df,long='Longitude',lat='Latitude'):
     """
     Recebe um DataFrame com um grid e retorna a elevação
     """
-    long, lat, size = df[long].to_numpy(), df[lat].to_numpy(), df.size
+    long, lat, size = df[long].to_numpy(), df[lat].to_numpy(), len(df)
     return [get_elevation_airmap(long[i],lat[i])[0] for i in range(size)]
 
 
